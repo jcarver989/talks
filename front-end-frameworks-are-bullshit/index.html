@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Title</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <style type="text/css">
+      @import url(https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
+      @import url(https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic);
+      @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
+
+      html,body { margin: 0; padding: 0; background: red; }
+      
+      .remark-slide-content.blue {
+        background: #00aadd;
+        color: #fff;
+      }
+
+
+      body { font-family: 'Helvetica Neue'; }
+      h1, h2, h3 {
+        font-family: 'Yanone Kaffeesatz';
+        font-weight: normal;
+      }
+      .remark-code, .remark-inline-code { font-family: 'Ubuntu Mono'; }
+
+      .remark-slide-content.green {
+        background: #F5F6D4; 
+        color: #32331D;
+      }
+
+      .remark-slide-content.red {
+        background: #C03000; 
+        color: #fff;
+      }
+    </style>
+  </head>
+  <body>
+    <textarea id="source">
+
+class: center, middle
+
+# JS Frameworks Are Bullshit
+### Go butt-naked-native instead
+
+---
+
+class: center, middle
+
+# Expectations
+### This is a rant
+
+---
+
+class: center, middle
+
+# Goal
+### Trolling (for good)
+
+---
+
+class: center, middle, green
+
+# A White Lie We Tell Ourselves
+### "front-end apps are complex therefore I need a framework"
+
+---
+
+class: center, middle, green
+
+# But secretly our nerdy little hearts go: 
+
+### "Yay I get to use new technology #nerd-love"
+
+---
+
+class: center, middle, green
+
+# So we marry a framework: 
+
+### "Man **Angular.js** is the shit!!! I do"
+
+---
+
+class: center, middle, green
+
+# 6 months later...
+### "I finally understand: scopes, filters, services, Angular's DI, directives & transclusion!"
+
+---
+
+class: center, middle, red
+
+# A day later...
+
+### "Damn! React.js is the new shit, I'm stuck on Angular"
+
+---
+
+class: center, middle, green
+
+# So what do you do?
+
+### Dump Angular.js & move to React.js on InDay!!!
+---
+
+class: center, middle
+
+![](tweet.png)
+
+---
+
+class: center, middle, green
+
+# Can you use your Angular.js shit with your React.js shit?
+
+### No, at least not easily
+
+---
+
+class: center, middle, green
+
+# Can you leverage what you learned with Angular.js in React.js?
+
+### No, at least not directly
+
+---
+
+class: center, middle, red
+
+# 6 months later...
+
+### Damn React.js is old news...the cycle continues
+---
+
+class: center, middle, red
+
+# Frameworks tempt you with their features
+
+### But it's a trap
+
+---
+
+class: center, middle
+
+# Expecting A Star Wars Slide?
+
+### Please
+
+---
+
+class: center, middle
+
+# Frameworks are prisons
+
+### for your code
+
+---
+
+class: center, middle, green
+
+# Once you're in
+
+### Your code will never leave. 
+
+---
+
+class: center, middle, green
+
+# Worse
+### You spent a long time learning that framework
+---
+
+class: center, middle, red
+
+# All frameworks...
+
+### are sinking ships, some just sink faster than others
+
+---
+
+# You Have 2 Choices
+
+###  1. Stick it out & go down with the ship (doomed to legacy)
+###  2. Become a framework nomad (always rewrite, leaving a wasteland of code in your wake)
+
+
+---
+
+class: center, middle
+
+# Those are lame options, but we put up with them
+
+### Because we NEED JS frameworks
+
+---
+
+class: center, middle, green
+
+# Do We?
+
+### Think hard. Why?
+
+---
+
+# 3 Common Reasons For JS Frameworks
+
+1. Data binding
+2. Templating
+3. Widgets
+
+---
+
+# 3 Common ~~Reasons~~ Excuses For JS Frameworks
+
+1. Data binding
+2. Templating
+3. Widgets
+
+---
+
+class: center, middle, green
+
+# All Are Bullshit
+
+### I'll walk through why for each one
+---
+
+class: center, middle, green
+
+# Common Excuse #1: Data Binding
+
+### When my JS domain object changes, update my form field
+---
+
+# Frameworks Use 3 Primary Methods Today
+
+1. Dirty checking (Angular 1x)
+2. Virtual DOM diffing (React)
+3. Explicit linking (Ember)
+
+---
+
+class: center, middle
+
+# The thing is
+
+### Data binding is now easy in vanilla JS
+
+---
+
+class: center, middle, green
+
+# Enter Object.observe
+
+### When a property changes, tell me
+---
+
+```javascript
+var todoModel = { name: "Stop using BS frameworks", state: "tragic" }
+
+function observer(changeStream) { 
+  changeStream.forEach(function(change) {
+    console.log(change)
+  })
+}
+
+Object.observe(todoModel, observer)
+
+todoModel.state = "hopeful"
+
+// Object {type: "update", object: Object, name: "state", oldValue: "tragic"}
+```
+---
+
+class: center, middle
+
+# Can mux changes from multiple objects into single stream too
+---
+
+```javascript
+var todoModel = { name: "Stop using BS frameworks", state: "tragic" }
+var userModel = { name: "Tom", tier: "free" }
+
+function observer(changeStream) { 
+  updateDOM(changeStream) 
+}
+
+Object.observe(todoModel, observer)
+Object.observe(projectModel, observer)
+
+// observe gets changes from both objects in same stream
+todoModel.state = "hopeful"
+userModel.tier = "moocher"
+
+```
+---
+
+# Also Easy To:
+1. Only listen to the events you care about (changed, added, deleted etc.)
+2. Send notifications off of arbitrary functions (see notify())
+3 . Hide changes from observers, ex: if you were going to make lots of changes at once, then do a single update (see performChange())
+
+---
+
+class: center, middle
+
+# Hey You cheated!!
+
+### That's 1 way data binding. I want bi-directional
+---
+
+class: center, middle, green
+
+# Enter: Mutation Observers
+
+### When the DOM changes, tell me
+---
+
+```javascript
+var target = document.querySelector('#some-id')
+ 
+var observer = new MutationObserver(function(changeStream) {
+  // same as before
+})
+ 
+var config = { attributes: true, ... }
+observer.observe(target, config)
+```
+
+---
+
+class: center, middle, green
+
+# Full example
+
+### 2 way data binding
+---
+
+```javascript
+
+function bindModelToView(obj, property, domElm) {
+  Object.observe(obj, function(changes) {
+    changes
+      .filter(function(c) { return c.name == property })
+      .forEach(function(c) {
+        domElm.text(c[property])
+      })
+  })
+}
+
+function bindViewToModel(obj, property, domElm) {
+  var observer = new MutationObserver(function(chagnes) {
+    mutations
+    .forEach(function(mutation) {
+      obj[property] = domElm.text
+    })
+  })
+
+  observer.observe(domElm, { attributes: true })
+}
+```
+
+---
+
+class: center, middle
+
+# Do I expect you to implement data-binding?
+
+### No, you can use a **micro** library. Point is you don't need a huge framework
+---
+
+# 3 Common ~~Reasons~~ Excuses For JS Frameworks
+
+1. ~~Data binding~~
+2. Templating
+3. Widgets
+
+---
+
+class: center, middle, green
+
+# Common Excuse #2: Templating
+
+### Goal: Reuse markup (ex list of  comments)
+---
+
+class: center, middle 
+
+# Enter: HTML5 &laquo;template&raquo; tag
+
+### Yes it's real
+---
+
+```html
+<html>
+  <head>
+   ...
+  </head>
+
+  <body>
+ <!-- Does not appear in the DOM & has no side effects: images & scripts don't run within this tag...yet  --> 
+   <template id="commentTemplate">
+      <section class="comment">
+        <img class="avatar" src="" />
+        <p class="message-text"></p>
+      </section>
+   </template>
+
+
+ </body>
+```
+
+```javascript
+var template = document.querySelector('#commentTemplate').content
+template.querySelector('img').src = '/avatars/josh.png'
+
+var clone = document.importNode(template, true)
+document.body.appendChild(clone) // now the image loads
+```
+---
+
+# 3 Common ~~Reasons~~ Excuses For JS Frameworks
+
+1. ~~Data binding~~
+2. ~~Templating~~
+3. Widgets
+
+---
+
+class: center, middle, green
+
+# Common Excuse #3: Widgets  
+
+### I want reusable components across my web-app
+---
+
+class: center, middle
+
+# Enter: web-components  
+
+### Native, reusable widgets. You can use with any framework 
+---
+
+# The Basics:
+
+#### Custom Elements
+
+- Create your own HTML tags, for example: &laquo;line-chart&raquo; (Custom Elements)
+-  They can have their own APIS
+
+#### Custom Events
+
+- Allow your custom components to send/recieve data via custom defined events (works just like clicks)
+
+#### Shadow DOM
+
+- Encapsulation: JS and CSS doesn't leak out (kinda like an iframe) 
+
+#### Imports
+ - Reusability/sharing via HTML5 imports 
+---
+
+# Why They Destroy Frameworks:
+
+1. **Native & standardized:** No insitutional knowledge required to build or use them.
+2. **No lock-in:** any front end app can use them - it's just HTML/JS/CSS
+3. **Loosely coupled:** you can mix and match your favorites
+---
+
+# Big Picture App:
+
+```html
+<html>
+  <head>
+    <link rel="import" href="/my-componenet-library.html">
+  </head>
+  <body>
+    <calendar-select data-name="Start"></calendar-select>
+    <calendar-select data-name="End"></calendar-select>
+    <button>Submit</button>
+
+    <line-chart></line-chart>
+
+    <metric-table></metric-table>
+  </body>
+</html>
+```
+
+1. Each component has its own API via attributes
+2. Each component has its own API via JS, ex startDate.getDate()
+2. Each component encapsulates its own HTML/CSS/JS methods & behavior (called Shadow DOM)
+
+---
+
+class: center, middle 
+
+# Creating Your Own Components
+
+### Really quickly
+
+---
+
+### Register your new element
+
+```javascript
+var LineChart = document.registerElement('line-chart')
+```
+
+### Add it to the DOM
+
+```javascript
+document.appendChild(new LineChart()) // or
+document.appendChild(document.createElement('line-chart'))
+```
+
+### Or just instantiate via HTML
+
+```html
+ <line-chart></line-chart>
+```
+
+---
+
+class: center, middle
+
+# Adding Functionality
+
+---
+
+### Give your component some api methods: 
+
+```javascript
+var LineChart = document.registerElement('line-chart', {
+  prototype: Object.create(HTMLElement.prototype, {
+    data: {
+      get: function() { return this._data }
+      set: function(data) { this._data = data }
+    },
+
+    updateDataFromUrl: function(url) {
+      get(url, this.data.set) // make an Ajax call & set the data
+    }
+  })
+})
+```
+
+---
+
+class: center, middle
+
+# Passing Data Around
+### Using custom events
+
+---
+
+### Create & Fire Your Own Custom Event: 
+
+```javascript
+var ChartUpdated = new CustomEvent("chartUpdated", {
+	detail: {
+		dateTime: new Date()
+	}
+});
+
+var LineChart = document.registerElement('line-chart', {
+  prototype: Object.create(HTMLElement.prototype, {
+    updateDataFromUrl: function(url) {
+      // ...
+      myElement.dispatchEvent(myEvent);
+    }
+  })
+})
+
+document.addEventListener('chartUpdated', function(e) {
+  console.log(e.dateTime)
+})
+```
+
+---
+
+### Best Practices:
+
+1. Use data-xxx attributes or plain JS methods to pass config/data to your custom widgets
+2. Use custom events for sending data out of a widget (remember their internal DOM is hidden from the outside)
+3. Use imports to organize your HTML/CSS/JS dependencies
+
+---
+
+# 3 Common ~~Reasons~~ Excuses For JS Frameworks
+
+1. ~~Data binding~~
+2. ~~Templating~~
+3. ~~Widgets~~
+
+---
+
+class: center, middle
+
+# Now Back To My Rant: Why JS Frameworks?
+---
+
+# Good Reasons To Use JS Frameworks: 
+
+### You like imprisoning code
+After all it's much too small to be left outside by itself
+
+### Reimplementing date select widgets again and again sounds fun
+After all code katas are important to your developer growth
+
+### You think preventing other people from using your widgets, is helping them
+Devs clearly should do more code katas so they can pass the LI interview questions 
+---
+
+class: center, middle
+
+# Go But Naked Native Instead
+### web-components + imports + object.observe
+---
+
+# Good Reasons To Go Native: 
+
+### You can upgrade incrementally
+Widgets are encapsulated, if a new JS feature comes out - just update 1 at a time.
+
+### You can *actually* reuse your widgets
+Writing a new app? You can just drop in your calendar select widget. It's native - JS & the apis aren't going away for a long time
+
+### Other people can *actually* reuse your widgets 
+No matter what framework they are in, they can use them
+---
+
+class: center, middle
+# Wrapping Up
+### Almost there!
+---
+
+class: center, middle
+# JS Frameworks encourage monolithic apps
+### It's difficult to separate pieces you like
+---
+
+class: center, middle
+# Web components encourage micro-services
+### They are decoupled, each do a single thing well are easy to change & share
+---
+
+class: center, middle
+# Your Favorite Framework Is a Sinking Ship
+### Eventually it will be a wreck
+---
+
+class: center, middle
+# Native JS/HTML/CSS is here to stay
+### It's not going anywhere
+---
+
+class: center, middle
+# How would you like to spend your time? 
+---
+
+class: center, middle
+# Learning the latest framework?
+### Where your knowledge will be mostly useless in 6 months Or... 
+---
+
+class: center, middle
+# Learning native JS/HTML/CSS 
+### Where you can directly re-use what you learned on your last project, today
+---
+
+class: center, middle
+# Over time you can learn N frameworks
+### Or reap compounding benefits from learning the native platform
+---
+
+class: center, middle
+# You can even use that saved time to write unit tests 
+### Because even in 2015 people still don't write them for front-end code...WTF
+---
+
+class: center, middle
+# Let Your Code Be Free, Go Native
+### The End
+---
+
+    </textarea>
+    <script src="https://gnab.github.io/remark/downloads/remark-latest.min.js">
+    </script>
+    <script>
+    var slideshow = remark.create({
+        ratio: "16:9",
+        navigation: {
+          scroll: false,
+          touch: false
+        }
+    });
+    </script>
+  </body>
+</html>
